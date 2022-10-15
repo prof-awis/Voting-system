@@ -128,7 +128,8 @@ if(isset($_POST['save'])) {
 <head>
     <meta charset="UTF-8">
     <title>Emoaw Sign Up Form</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
 </head>
 
@@ -148,7 +149,7 @@ if(isset($_POST['save'])) {
         <?php if (isset($error['firstname'])) {
                 echo $error['firstname'];
             }?>
-
+Imagine the kind pain you'll be instilling in your self
         <label for="surname">Surname</label>
         <input type="text" name="surname" id="surname" value="<?php if(isset($surname)){echo $surname;}?>">
         <?php if (isset($error['surname'])) {
