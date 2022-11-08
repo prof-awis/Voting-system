@@ -1,4 +1,7 @@
 <?php 
+// Require the Database Connection Page
+require("db_connect.php");
+
 
 //checking if the save button is clicked
 
@@ -97,26 +100,40 @@ if(isset($_POST['save'])) {
         else {
             //prevents Cross Site Scripting Attack
             $password=htmlspecialchars($password);
+            $password = crypt($password, 'vote_2022');
 
-              // Validate password strength
-                 $uppercase    = preg_match('@[A-Z]@', $password);
-                 $lowercase    = preg_match('@[a-z]@', $password);
-                 $number       = preg_match('@[0-9]@', $password);
-                 $specialchars = preg_match('@[^\w]@', $password);
+            //   // Validate password strength
+            //      $uppercase    = preg_match('@[A-Z]@', $password);
+            //      $lowercase    = preg_match('@[a-z]@', $password);
+            //      $number       = preg_match('@[0-9]@', $password);
+            //      $specialchars = preg_match('@[^\w]@', $password);
   
-            if (!$uppercase || !$lowercase || !$number || !$specialchars || strlen($password) < 8) {
-                $error['password'] = "<p style='color: red;'>Password is not Strong. Must at least have 8(eight) characters(special character, an uppercase, a lowercase and a number)</p>";
+            // if (!$uppercase || !$lowercase || !$number || !$specialchars || strlen($password) < 8) {
+            //     $error['password'] = "<p style='color: red;'>Password is not Strong. Must at least have 8(eight) characters(special character, an uppercase, a lowercase and a number)</p>";
     
-             } else {
-                // $error['password'] = 'Password is Strong';
-                 } 
+            //  } else {
+            //     // $error['password'] = 'Password is Strong';
+            //      } 
         }
          
     //feedback to the user
     if (array_filter($error)) {
-        echo "<script style='color: red;'>alert('Please sort out the above errors before you can proceed')</script>";
-    }else{
-        $success = "<p style='color: green; text-align: center; '>Successful Sign up.<br> Now you can <a href='login.php'>Log in</a></p>";
+        $error['general'] = "<p style='color: red;'>Please sort out the above errors before you can proceed.</p>"; 
+       // echo "<script style='color: red;'>alert('Please sort out the above errors before you can proceed')</script>";
+    }
+    else{
+        //This is the sql statement to insert data to the user table
+        $sql = "INSERT INTO user(firstname, othernames, contact, emailaddress, password) 
+                        VALUES ('$firstname', '$surname', $phonenumber, '$email', '$password')";
+
+        //We execute the sql statement using the query() function
+        //and check whether the data is saved successfully using the if statements
+        if ($dbconnect->query($sql) === TRUE) {
+             $success = "<p style='color: green; text-align: center; '>Successful Sign up.<br> Now you can <a href='login.php'>Log in</a></p>";
+        }else {
+            $error['general'] = "<p style='color: red;'> Error: " . $dbconnect->error . "</p>";
+        }
+       
     }
 }
 
@@ -131,6 +148,8 @@ if(isset($_POST['save'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    
 </head>
 
 <body>
@@ -139,46 +158,56 @@ if(isset($_POST['save'])) {
         <div class="shape"></div>
     </div>
 
-    <form action="signup.php" method="post">
+    <form action="#" method="post" id="register">
         <h3>Sign Up Here</h3>
 
         <label for="fname">First Name</label>
-        <!-- in order to persist data we use the value attribute -->
-        <input type="text" name="fname" id="fname" value="<?php if(isset($firstname)){echo $firstname;}?>">
+        <!-- in order to persist data we use the value attribute  html validation:pattern attribute-->
+        <input type="text" name="fname"  maxlength="15" id="fname" value="<?php if(isset($firstname)){echo $firstname;}?>" required>
         <!-- communicating errors -->
         <?php if (isset($error['firstname'])) {
                 echo $error['firstname'];
             }?>
-Imagine the kind pain you'll be instilling in your self
+            <div id="fnameerror" stye="color: red;"></div>
+
         <label for="surname">Surname</label>
-        <input type="text" name="surname" id="surname" value="<?php if(isset($surname)){echo $surname;}?>">
+        <input type="text" name="surname" id="surname" value="<?php if(isset($surname)){echo $surname;}?>" required>
         <?php if (isset($error['surname'])) {
                 echo $error['surname'];
             }?>
 
         <label for="phonenumber">Phone Number</label>
-        <input type="text" name="phonenumber" id="phonenumber" placeholder="07xxxxxxxx"
-            value="<?php if(isset($phonenumber)){echo $phonenumber;}?>">
+        <input type="number" name="phonenumber"  max="0799999999" min="0700000000" id="phonenumber" placeholder="07xxxxxxxx"
+            value="<?php if(isset($phonenumber)){echo $phonenumber;}?>" required>
         <?php if (isset($error['phonenumber'])) {
                 echo $error['phonenumber'];
             }?>
 
         <label for="email">Email</label>
-        <input type="text" name="email" id="email" value="<?php if(isset($email)){echo $email;}?>">
+        <input type="email" name="email" id="email" value="<?php if(isset($email)){echo $email;}?>" required>
      <?php if (isset($error['email'])) {
                 echo $error['email'];
             }?>
 
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <input type="password" name="password" id="password" required>
         <?php if (isset($error['password'])) {
                 echo $error['password'];
             }?>
 
         <br><br>
+
+        <?php if (isset($error['general'])) {
+                echo $error['general'];
+            }?>
+
         <?php if (isset($success)) {
                 echo $success;
             }?>
+
+            <label for="policy">Agree to our privacy policy</label>
+            <label for="">Yes</label><input type="radio" name="policy" class="terms" id="yes">
+            <label for="">No</label><input type="radio" name="policy" class="terms" id="no">
 
         <input type="submit" value="Sign Up" id="save" name="save">
 
@@ -190,6 +219,29 @@ Imagine the kind pain you'll be instilling in your self
 
     </form>
 
+    <!-- javascript validation -->
+    <script type="text/javascript">
+        const form = document.getElementById('register');
+        const fname = document.getElementById('fname');
+        const phonenumber = document.getElementById('phonenumber');
+        var error = document.getElementById('fnameerror');
+
+        form.addEventListener('submit', (e) => {
+            // alert("You are here");
+        
+            if (fname.value ==='' || fname.value == null) {
+                error.innerText = "Enter your first name.";
+                //disabling the submit button
+                e.preventDefault();
+            }
+
+            if (phonenumber.value.length < 10 || phonenumber > 10) {
+                alert("Phone number is supposed to be 10 digits");
+                e.preventDefault();
+            }
+        } )
+    </script>
+ 
 </body>
 
 </html>

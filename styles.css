@@ -134,3 +134,7 @@ input {
     margin-right: 4px;
 }
 
+/* css validation */
+#no:checked ~ input[type="submit"]{
+    display: none;
+}

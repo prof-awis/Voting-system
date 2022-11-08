@@ -1,3 +1,18 @@
+<?php 
+
+//start the session
+session_start();
+
+
+// Require/includethe Database Connection Page
+require("db_connect.php");
+
+//create variable to pickup session variables
+$firstname = $_SESSION['firstname'];
+$othernames = $_SESSION['othernames'];
+
+?>
+
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -78,7 +93,7 @@
 			<div class="nalika-profile">
 				<div class="profile-dtl">
 					<a href="#"><img src="img/notification/4.jpg" alt="" /></a>
-					<h2>Lakian <span class="min-dtn">Das</span></h2>
+					<h2><?php echo $firstname ?> <span class="min-dtn"><?php echo $othernames ?> </span></h2>
 				</div>
 				<div class="profile-social-dtl">
 					<ul class="dtl-social">

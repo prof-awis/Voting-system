@@ -1,3 +1,61 @@
+<?php 
+
+//start the session
+session_start();
+
+
+// Require/includethe Database Connection Page
+require("db_connect.php");
+
+//Pick user details from the form
+if(isset($_POST['login'])) {
+
+  //creating variables to hold the form data
+  $email=$password=$login_sucess=$login_error= '';
+
+  //picking up the data from form
+  $email=$_POST['email'];
+  $password=$_POST['password'];
+
+     //prevents Cross Site Scripting Attack
+     $email=htmlspecialchars($email);
+     $email = mysqli_real_escape_string($dbconnect, $email);
+     $password = htmlspecialchars($password);
+     $password = mysqli_real_escape_string($dbconnect, $password);
+
+     //Encrypt
+     $password = crypt($password, 'vote_2022');
+
+  //echo "<p style='color: white;'> $email $password</p>";
+
+  //Retrieve the data from the database
+  //step-1 write  down the sql data
+  $sql = "SELECT * FROM user WHERE emailaddress = '$email' ";
+  //step-2 Execute the sq; statement using the mysqli query function exists
+  $result = mysqli_query($dbconnect, $sql);
+  //step-3 Fetch the results 
+  $user = mysqli_fetch_assoc($result);
+
+  //print_r($user);
+  //Save the password from the database to a variable
+  $pass_from_db = $user['password'];
+
+  if ($password == $pass_from_db) {
+    $login_success = "<p style='color: green;'>Login successful</p>";
+//save some user info on a session
+$_SESSION['firstname'] = $user['firstname'];
+$_SESSION['othernames'] = $user['othernames'];
+
+    //redirecting user to their home page
+    header('Location: index.php');
+
+  } else {
+    $login_error = "<p style='color: red;'>Login failed. Please  try again.</p>";
+  }
+  
+}
+
+?>
 <!doctype html>
 <html class="no-js" lang="en">
 
@@ -86,7 +144,7 @@
                 </div>
                 <div class="hpanel">
                     <div class="panel-body">
-                        <form action="#" id="loginForm">
+                        <form action="#" method="post" id="loginForm">
                             <div class="form-group">
                                 <label class="control-label" for="email">Email</label>
                                 <input type="email" placeholder="example@gmail.com" title="Please enter you email addreses" required="required" value="" name="email" id="email" class="form-control">
@@ -98,6 +156,16 @@
                                 <span class="help-block small">Your strong password</span>
                             </div>
                             
+                            <?php 
+                             if(isset($login_success)):
+                                echo $login_success;
+                            endif;
+
+                            if(isset($login_error)):
+                              echo $login_error;
+                          endif;
+                             ?>
+
                             <input type="submit" id="login" name="login" value="Login" class="btn btn-success btn-block loginbtn" />
                             <a class="btn btn-default btn-block" href="signup.php">Register</a>
                         </form>
