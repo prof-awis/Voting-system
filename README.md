@@ -30,4 +30,5 @@ Things done:
 - PHP Super globals
 - PHP Logout -Unset session
 - PHP User defined functions
-
+- Voting System Database Schema
+- Editing User details
