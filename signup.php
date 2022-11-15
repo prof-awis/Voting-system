@@ -137,6 +137,9 @@ if(isset($_POST['save'])) {
     }
 }
 
+// close the database connection
+mysqli_close($dbconnect);
+
     ?>
 
 <!DOCTYPE html>

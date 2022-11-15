@@ -31,7 +31,7 @@ if(isset($_POST['login'])) {
   //Retrieve the data from the database
   //step-1 write  down the sql data
   $sql = "SELECT * FROM user WHERE emailaddress = '$email' ";
-  //step-2 Execute the sq; statement using the mysqli query function exists
+  //step-2 Execute the sql statement using the mysqli query function exists
   $result = mysqli_query($dbconnect, $sql);
   //step-3 Fetch the results 
   $user = mysqli_fetch_assoc($result);
@@ -52,8 +52,14 @@ $_SESSION['othernames'] = $user['othernames'];
   } else {
     $login_error = "<p style='color: red;'>Login failed. Please  try again.</p>";
   }
+
+  //free memory result
+  mysqli_free_result($result);
   
 }
+
+// close the database connection
+mysqli_close($dbconnect);
 
 ?>
 <!doctype html>
