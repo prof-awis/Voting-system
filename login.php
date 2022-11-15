@@ -7,6 +7,9 @@ session_start();
 // Require/includethe Database Connection Page
 require("db_connect.php");
 
+//Require the user defined functin page
+require("my_function.php");
+
 //Pick user details from the form
 if(isset($_POST['login'])) {
 
@@ -18,10 +21,8 @@ if(isset($_POST['login'])) {
   $password=$_POST['password'];
 
      //prevents Cross Site Scripting Attack
-     $email=htmlspecialchars($email);
-     $email = mysqli_real_escape_string($dbconnect, $email);
-     $password = htmlspecialchars($password);
-     $password = mysqli_real_escape_string($dbconnect, $password);
+     $email= sanitize($email);
+     $password = sanitize($password);
 
      //Encrypt
      $password = crypt($password, 'vote_2022');
@@ -45,6 +46,10 @@ if(isset($_POST['login'])) {
 //save some user info on a session
 $_SESSION['firstname'] = $user['firstname'];
 $_SESSION['othernames'] = $user['othernames'];
+$_SESSION['id'] = $user['id'];
+$_SESSION['contact'] = $user['contact'];
+$_SESSION['emailadress'] = $user['emailadress'];
+$_SESSION['password'] = $user['password'];
 
     //redirecting user to their home page
     header('Location: index.php');
@@ -150,7 +155,7 @@ mysqli_close($dbconnect);
                 </div>
                 <div class="hpanel">
                     <div class="panel-body">
-                        <form action="#" method="post" id="loginForm">
+                        <form action=" <?php echo $_SERVER['PHP_SELF']; ?> " method="post" id="loginForm">
                             <div class="form-group">
                                 <label class="control-label" for="email">Email</label>
                                 <input type="email" placeholder="example@gmail.com" title="Please enter you email addreses" required="required" value="" name="email" id="email" class="form-control">

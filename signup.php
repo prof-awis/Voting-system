@@ -2,6 +2,8 @@
 // Require the Database Connection Page
 require("db_connect.php");
 
+//Require the user defined functin page
+require("my_function.php");
 
 //checking if the save button is clicked
 
@@ -35,7 +37,7 @@ if(isset($_POST['save'])) {
 
         else {
         //prevents Cross Site Scripting Attack
-        $firstname=htmlspecialchars($firstname);
+        $firstname=sanitize($firstname);
 
         //check whether special characters have been used on the name
         if ( !preg_match('/^[a-z]+$/i', $firstname)) {
@@ -50,7 +52,7 @@ if(isset($_POST['save'])) {
 
         else {
             //prevents Cross Site Scripting Attack
-            $surname=htmlspecialchars($surname);
+            $surname=sanitize($surname);
 
             //check whether special characters have been used on the name
             if (!preg_match('/^[a-z]+$/i', $surname)) {
@@ -65,7 +67,7 @@ if(isset($_POST['save'])) {
 
         else {
             //prevents Cross Site Scripting Attack
-            $phonenumber=htmlspecialchars($phonenumber);
+            $phonenumber=sanitize($phonenumber);
 
             //check whether phone number is numbers
             if (!is_numeric($phonenumber)) {
@@ -84,7 +86,7 @@ if(isset($_POST['save'])) {
 
         else {
             //prevents Cross Site Scripting Attack
-            $email=htmlspecialchars($email);
+            $email=sanitize($email);
 
             //check whether email address is valid
             if( !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -99,7 +101,7 @@ if(isset($_POST['save'])) {
 
         else {
             //prevents Cross Site Scripting Attack
-            $password=htmlspecialchars($password);
+            $password=sanitize($password);
             $password = crypt($password, 'vote_2022');
 
             //   // Validate password strength
@@ -161,7 +163,7 @@ mysqli_close($dbconnect);
         <div class="shape"></div>
     </div>
 
-    <form action="#" method="post" id="register">
+    <form action=" <?php echo $_SERVER['PHP_SELF']; ?> " method="post" id="register">
         <h3>Sign Up Here</h3>
 
         <label for="fname">First Name</label>
