@@ -23,3 +23,11 @@ This is how the progress is so far:
 
 - Connected the earlier created database to the login page. This is to help in verifcation
 
+## 4. Worked on Log Out page
+Things done:
+- Mysqli Release results
+- Mysqli close
+- PHP Super globals
+- PHP Logout -Unset session
+- PHP User defined functions
+
